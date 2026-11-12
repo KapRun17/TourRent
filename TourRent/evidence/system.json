@@ -1,0 +1,323 @@
+{
+  "auth": "OAuth2 / OpenID Connect",
+  "diagnostics": {
+    "configurationSource": "git-main",
+    "pendingOutbox": 2,
+    "circuitBreaker": "CLOSED"
+  },
+  "services": [
+    {
+      "name": "rental-service",
+      "status": "UP",
+      "instances": [
+        "rental-service:c616bb93179c"
+      ],
+      "details": {
+        "status": "UP",
+        "groups": [
+          "liveness",
+          "readiness"
+        ],
+        "components": {
+          "clientConfigServer": {
+            "status": "UP",
+            "details": {
+              "propertySources": [
+                "configserver:file:/config-repository/rental-service.yml",
+                "configserver:file:/config-repository/application.yml",
+                "configClient"
+              ]
+            }
+          },
+          "db": {
+            "status": "UP",
+            "details": {
+              "database": "PostgreSQL",
+              "validationQuery": "isValid()"
+            }
+          },
+          "discoveryComposite": {
+            "status": "UP",
+            "components": {
+              "discoveryClient": {
+                "status": "UP",
+                "details": {
+                  "services": [
+                    "api-gateway",
+                    "catalog-service",
+                    "logistics-service",
+                    "rental-service"
+                  ]
+                }
+              },
+              "eureka": {
+                "description": "Remote status from Eureka server",
+                "status": "UP",
+                "details": {
+                  "applications": {
+                    "API-GATEWAY": 1,
+                    "CATALOG-SERVICE": 2,
+                    "LOGISTICS-SERVICE": 1,
+                    "RENTAL-SERVICE": 1
+                  }
+                }
+              }
+            }
+          },
+          "diskSpace": {
+            "status": "UP",
+            "details": {
+              "total": 1081101176832,
+              "free": 997381939200,
+              "threshold": 10485760,
+              "path": "/app/.",
+              "exists": true
+            }
+          },
+          "livenessState": {
+            "status": "UP"
+          },
+          "ping": {
+            "status": "UP"
+          },
+          "rabbit": {
+            "status": "UP",
+            "details": {
+              "version": "4.1.8"
+            }
+          },
+          "reactiveDiscoveryClients": {
+            "status": "UP",
+            "components": {
+              "Simple Reactive Discovery Client": {
+                "status": "UP",
+                "details": {
+                  "services": []
+                }
+              },
+              "Spring Cloud Eureka Reactive Discovery Client": {
+                "status": "UP",
+                "details": {
+                  "services": [
+                    "api-gateway",
+                    "catalog-service",
+                    "logistics-service",
+                    "rental-service"
+                  ]
+                }
+              }
+            }
+          },
+          "readinessState": {
+            "status": "UP"
+          },
+          "refreshScope": {
+            "status": "UP"
+          },
+          "ssl": {
+            "status": "UP",
+            "details": {
+              "validChains": [],
+              "invalidChains": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "logistics-service",
+      "status": "UP",
+      "instances": [
+        "logistics-service:ad2d525893c3"
+      ],
+      "details": {
+        "status": "UP",
+        "groups": [
+          "liveness",
+          "readiness"
+        ],
+        "components": {
+          "clientConfigServer": {
+            "status": "UP",
+            "details": {
+              "propertySources": [
+                "configserver:file:/config-repository/logistics-service.yml",
+                "configserver:file:/config-repository/application.yml",
+                "configClient"
+              ]
+            }
+          },
+          "db": {
+            "status": "UP",
+            "details": {
+              "database": "PostgreSQL",
+              "validationQuery": "isValid()"
+            }
+          },
+          "discoveryComposite": {
+            "status": "UP",
+            "components": {
+              "discoveryClient": {
+                "status": "UP",
+                "details": {
+                  "services": [
+                    "api-gateway",
+                    "catalog-service",
+                    "logistics-service",
+                    "rental-service"
+                  ]
+                }
+              },
+              "eureka": {
+                "description": "Remote status from Eureka server",
+                "status": "UP",
+                "details": {
+                  "applications": {
+                    "API-GATEWAY": 1,
+                    "CATALOG-SERVICE": 2,
+                    "LOGISTICS-SERVICE": 1,
+                    "RENTAL-SERVICE": 1
+                  }
+                }
+              }
+            }
+          },
+          "diskSpace": {
+            "status": "UP",
+            "details": {
+              "total": 1081101176832,
+              "free": 997381939200,
+              "threshold": 10485760,
+              "path": "/app/.",
+              "exists": true
+            }
+          },
+          "livenessState": {
+            "status": "UP"
+          },
+          "ping": {
+            "status": "UP"
+          },
+          "rabbit": {
+            "status": "UP",
+            "details": {
+              "version": "4.1.8"
+            }
+          },
+          "readinessState": {
+            "status": "UP"
+          },
+          "refreshScope": {
+            "status": "UP"
+          },
+          "ssl": {
+            "status": "UP",
+            "details": {
+              "validChains": [],
+              "invalidChains": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catalog-service",
+      "status": "UP",
+      "instances": [
+        "catalog-service:3ed26cb0ec0d",
+        "catalog-service:2c2e077192ac"
+      ],
+      "details": {
+        "status": "UP",
+        "groups": [
+          "liveness",
+          "readiness"
+        ],
+        "components": {
+          "clientConfigServer": {
+            "status": "UP",
+            "details": {
+              "propertySources": [
+                "configserver:file:/config-repository/catalog-service.yml",
+                "configserver:file:/config-repository/application.yml",
+                "configClient"
+              ]
+            }
+          },
+          "db": {
+            "status": "UP",
+            "details": {
+              "database": "PostgreSQL",
+              "validationQuery": "isValid()"
+            }
+          },
+          "discoveryComposite": {
+            "status": "UP",
+            "components": {
+              "discoveryClient": {
+                "status": "UP",
+                "details": {
+                  "services": [
+                    "api-gateway",
+                    "catalog-service",
+                    "logistics-service",
+                    "rental-service"
+                  ]
+                }
+              },
+              "eureka": {
+                "description": "Remote status from Eureka server",
+                "status": "UP",
+                "details": {
+                  "applications": {
+                    "API-GATEWAY": 1,
+                    "CATALOG-SERVICE": 2,
+                    "LOGISTICS-SERVICE": 1,
+                    "RENTAL-SERVICE": 1
+                  }
+                }
+              }
+            }
+          },
+          "diskSpace": {
+            "status": "UP",
+            "details": {
+              "total": 1081101176832,
+              "free": 997381939200,
+              "threshold": 10485760,
+              "path": "/app/.",
+              "exists": true
+            }
+          },
+          "livenessState": {
+            "status": "UP"
+          },
+          "ping": {
+            "status": "UP"
+          },
+          "rabbit": {
+            "status": "UP",
+            "details": {
+              "version": "4.1.8"
+            }
+          },
+          "readinessState": {
+            "status": "UP"
+          },
+          "refreshScope": {
+            "status": "UP"
+          },
+          "ssl": {
+            "status": "UP",
+            "details": {
+              "validChains": [],
+              "invalidChains": []
+            }
+          }
+        }
+      }
+    }
+  ],
+  "broker": "RabbitMQ",
+  "configuration": "Spring Cloud Config / Git"
+}

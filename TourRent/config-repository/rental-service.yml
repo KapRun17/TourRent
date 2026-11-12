@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://rentals-db:5432/rentals
+    username: tourrent
+    password: tourrent-demo
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          catalog-service:
+            connectTimeout: 1200
+            readTimeout: 2000
+    loadbalancer:
+      cache:
+        ttl: 5s
+        enabled: true

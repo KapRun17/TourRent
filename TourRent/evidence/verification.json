@@ -1,0 +1,132 @@
+{
+  "at": "2026-11-09T14:34:39.792Z",
+  "checks": [
+    {
+      "name": "OAuth2 token issued",
+      "result": "PASS",
+      "detail": {
+        "issuer": "http://localhost:8180/realms/tourrent"
+      }
+    },
+    {
+      "name": "Unauthenticated API request rejected",
+      "result": "PASS",
+      "detail": 401
+    },
+    {
+      "name": "Invalid JWT rejected",
+      "result": "PASS",
+      "detail": 401
+    },
+    {
+      "name": "Gateway balances between two discovered catalog instances",
+      "result": "PASS",
+      "detail": [
+        "3ed26cb0ec0d",
+        "2c2e077192ac"
+      ]
+    },
+    {
+      "name": "Invalid booking rejected",
+      "result": "PASS",
+      "detail": 400
+    },
+    {
+      "name": "Rental creation, price and correlation",
+      "result": "PASS",
+      "detail": {
+        "id": "4e67f17b-d77a-4b23-a334-b17c8bfd7f20",
+        "total": 2070,
+        "requestId": "pr8-1794234809364"
+      }
+    },
+    {
+      "name": "Gateway overwrites spoofed owner header",
+      "result": "PASS",
+      "detail": true
+    },
+    {
+      "name": "SSE receives outbound status sequence",
+      "result": "PASS",
+      "detail": [
+        "CONFIRMED",
+        "DELIVERY_CREATED",
+        "IN_TRANSIT",
+        "DELIVERED"
+      ]
+    },
+    {
+      "name": "SSE resumes after Last-Event-ID",
+      "result": "PASS",
+      "detail": {
+        "last": 18
+      }
+    },
+    {
+      "name": "Repeated RabbitMQ event creates exactly one delivery",
+      "result": "PASS",
+      "detail": {
+        "duplicates": 2,
+        "deliveries": 1
+      }
+    },
+    {
+      "name": "Return route reaches COMPLETED",
+      "result": "PASS",
+      "detail": true
+    },
+    {
+      "name": "Completed rental releases catalog reservation",
+      "result": "PASS",
+      "detail": true
+    },
+    {
+      "name": "Concurrent booking cannot exceed stock",
+      "result": "PASS",
+      "detail": [
+        201,
+        409
+      ]
+    },
+    {
+      "name": "Early rental can be cancelled",
+      "result": "PASS",
+      "detail": "CANCELLED"
+    },
+    {
+      "name": "One requestId traces Gateway, rental, catalog and RabbitMQ consumers",
+      "result": "PASS",
+      "detail": "pr8-1794234809364"
+    },
+    {
+      "name": "Config Server uses a committed Git repository",
+      "result": "PASS",
+      "detail": {
+        "version": "5a525814ff389821a976226dd3a4424b6a14a9ab"
+      }
+    },
+    {
+      "name": "Catalog outage produces bounded 503 and opens circuit",
+      "result": "PASS",
+      "detail": [
+        {
+          "status": 503,
+          "ms": 5127
+        },
+        {
+          "status": 503,
+          "ms": 5067
+        },
+        {
+          "status": 503,
+          "ms": 24
+        }
+      ]
+    },
+    {
+      "name": "Creation recovers after catalog restart",
+      "result": "PASS",
+      "detail": 201
+    }
+  ]
+}

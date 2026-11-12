@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: logistics-service
+  config:
+    import: "configserver:${CONFIG_SERVER_URL:http://config-server:8888}"
+  cloud:
+    config:
+      fail-fast: true
+server:
+  port: 8080

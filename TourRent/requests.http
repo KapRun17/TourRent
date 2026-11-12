@@ -1,0 +1,46 @@
+### 1. Получить токен; скопировать access_token в переменную ниже
+POST http://localhost:8180/realms/tourrent/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=tourrent-web&username=demo&password=Demo12345%21
+
+@token = REPLACE_WITH_ACCESS_TOKEN
+@rentalId = REPLACE_WITH_RENTAL_ID
+
+### 2. Каталог (X-Service-Instance меняется между двумя репликами)
+GET http://localhost:8078/api/equipment
+Authorization: Bearer {{token}}
+
+### 3. Указать будущий период аренды
+POST http://localhost:8078/api/rentals
+Authorization: Bearer {{token}}
+X-Request-ID: manual-demo-001
+Content-Type: application/json
+
+{"equipmentId":1,"quantity":1,"startDate":"2026-12-10","endDate":"2026-12-13","recipient":"Прокофьев И.Р.","address":"Москва, проспект Вернадского, 78"}
+
+### 4. Мои аренды
+GET http://localhost:8078/api/rentals
+Authorization: Bearer {{token}}
+
+### 5. Возобновляемый SSE
+GET http://localhost:8078/api/rentals/{{rentalId}}/events
+Authorization: Bearer {{token}}
+Accept: text/event-stream
+Last-Event-ID: 0
+
+### 6. Возврат после DELIVERED
+POST http://localhost:8078/api/rentals/{{rentalId}}/return
+Authorization: Bearer {{token}}
+
+### 7. Отмена до отправки курьеру
+POST http://localhost:8078/api/rentals/{{rentalId}}/cancel
+Authorization: Bearer {{token}}
+
+### 8. Мои доставки и состояние системы
+GET http://localhost:8078/api/deliveries
+Authorization: Bearer {{token}}
+
+### 9. Инфраструктура
+GET http://localhost:8078/api/system
+Authorization: Bearer {{token}}

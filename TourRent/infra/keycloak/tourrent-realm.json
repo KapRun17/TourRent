@@ -1,0 +1,59 @@
+{
+  "realm": "tourrent",
+  "enabled": true,
+  "displayName": "TourRent — прокат снаряжения",
+  "registrationAllowed": false,
+  "sslRequired": "none",
+  "accessTokenLifespan": 900,
+  "roles": {
+    "realm": [
+      {
+        "name": "CUSTOMER"
+      },
+      {
+        "name": "ADMIN"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "tourrent-web",
+      "name": "TourRent",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:8078/*",
+        "http://127.0.0.1:8078/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8078",
+        "http://127.0.0.1:8078"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "demo",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Иван",
+      "lastName": "Прокофьев",
+      "email": "demo@tourrent.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Demo12345!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "CUSTOMER"
+      ]
+    }
+  ]
+}

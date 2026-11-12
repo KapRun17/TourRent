@@ -1,0 +1,19 @@
+{
+  "id": "4e67f17b-d77a-4b23-a334-b17c8bfd7f20",
+  "requestId": "pr8-1794234809364",
+  "created": {
+    "id": "4e67f17b-d77a-4b23-a334-b17c8bfd7f20",
+    "owner_id": "ed47ca02-be9e-47a3-9a0c-ff26113b5756",
+    "equipment_id": 1,
+    "equipment_name": "Палатка North Ridge 2",
+    "start_date": "2026-11-19",
+    "end_date": "2026-11-22",
+    "quantity": 1,
+    "total": 2070,
+    "recipient": "Прокофьев И.Р.",
+    "address": "Москва, проспект Вернадского, д. 78",
+    "status": "CONFIRMED",
+    "request_id": "pr8-1794234809364",
+    "created_at": "2026-11-09T14:33:29.481+00:00"
+  }
+}

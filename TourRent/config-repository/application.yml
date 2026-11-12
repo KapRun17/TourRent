@@ -1,0 +1,53 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${HOSTNAME:local}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+spring:
+  mvc:
+    problemdetails:
+      enabled: true
+  webflux:
+    problemdetails:
+      enabled: true
+  rabbitmq:
+    host: rabbitmq
+    username: tourrent
+    password: tourrent-demo
+    publisher-confirm-type: simple
+    connection-timeout: 3s
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 4
+          initial-interval: 1s
+        default-requeue-rejected: false
+  sql:
+    init:
+      mode: always
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 3000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [${spring.application.name}] [%thread] %logger{32} : %msg%n"
+tourrent:
+  configuration-source: git-main
+  delivery-price: 490

@@ -1,0 +1,122 @@
+name: tourrent
+x-java: &java
+  restart: unless-stopped
+  environment:
+    TZ: Europe/Moscow
+  healthcheck:
+    test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
+    interval: 10s
+    timeout: 4s
+    retries: 15
+    start_period: 90s
+x-db: &db
+  image: postgres:17-alpine
+  restart: unless-stopped
+  environment:
+    POSTGRES_USER: tourrent
+    POSTGRES_PASSWORD: tourrent-demo
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U tourrent"]
+    interval: 5s
+    timeout: 3s
+    retries: 20
+services:
+  catalog-db:
+    <<: *db
+    environment: {POSTGRES_DB: catalog, POSTGRES_USER: tourrent, POSTGRES_PASSWORD: tourrent-demo}
+    volumes: [catalog-data:/var/lib/postgresql/data]
+  rentals-db:
+    <<: *db
+    environment: {POSTGRES_DB: rentals, POSTGRES_USER: tourrent, POSTGRES_PASSWORD: tourrent-demo}
+    volumes: [rentals-data:/var/lib/postgresql/data]
+  logistics-db:
+    <<: *db
+    environment: {POSTGRES_DB: logistics, POSTGRES_USER: tourrent, POSTGRES_PASSWORD: tourrent-demo}
+    volumes: [logistics-data:/var/lib/postgresql/data]
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    command: ["sh", "-ec", "chown -R rabbitmq:rabbitmq /var/lib/rabbitmq; exec su-exec rabbitmq rabbitmq-server"]
+    environment: {RABBITMQ_DEFAULT_USER: tourrent, RABBITMQ_DEFAULT_PASS: tourrent-demo}
+    ports: ["127.0.0.1:15678:15672"]
+    volumes: [rabbit-data:/var/lib/rabbitmq]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7
+    command: ["start-dev", "--import-realm", "--hostname=http://localhost:8180", "--hostname-strict=false"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin-demo
+      JAVA_OPTS_KC_HEAP: "-Xms128m -Xmx256m"
+    ports: ["127.0.0.1:8180:8080"]
+    volumes: [./infra/keycloak/tourrent-realm.json:/opt/keycloak/data/import/tourrent-realm.json:ro, keycloak-data:/opt/keycloak/data]
+  discovery-server:
+    <<: *java
+    image: tourrent/discovery-server:1.0.0
+    build: {context: ., args: {MODULE: discovery-server}}
+    ports: ["127.0.0.1:8768:8761"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 4s
+      retries: 20
+      start_period: 90s
+  config-server:
+    <<: *java
+    image: tourrent/config-server:1.0.0
+    build: {context: ., args: {MODULE: config-server}}
+    ports: ["127.0.0.1:8888:8888"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 4s
+      retries: 20
+      start_period: 90s
+  catalog-service:
+    <<: *java
+    image: tourrent/catalog-service:1.0.0
+    build: {context: ., args: {MODULE: catalog-service}}
+    depends_on:
+      catalog-db: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      discovery-server: {condition: service_healthy}
+      config-server: {condition: service_healthy}
+  catalog-service-2:
+    <<: *java
+    image: tourrent/catalog-service:1.0.0
+    depends_on:
+      catalog-service: {condition: service_healthy}
+  rental-service:
+    <<: *java
+    image: tourrent/rental-service:1.0.0
+    build: {context: ., args: {MODULE: rental-service}}
+    depends_on:
+      rentals-db: {condition: service_healthy}
+      catalog-service: {condition: service_healthy}
+  logistics-service:
+    <<: *java
+    image: tourrent/logistics-service:1.0.0
+    build: {context: ., args: {MODULE: logistics-service}}
+    depends_on:
+      logistics-db: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      config-server: {condition: service_healthy}
+      discovery-server: {condition: service_healthy}
+  api-gateway:
+    <<: *java
+    image: tourrent/api-gateway:1.0.0
+    build: {context: ., args: {MODULE: api-gateway}}
+    ports: ["127.0.0.1:8078:8080"]
+    depends_on:
+      rental-service: {condition: service_healthy}
+      logistics-service: {condition: service_healthy}
+      keycloak: {condition: service_started}
+volumes:
+  catalog-data:
+  rentals-data:
+  logistics-data:
+  rabbit-data:
+  keycloak-data:

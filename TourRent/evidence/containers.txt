@@ -1,0 +1,12 @@
+api-gateway | Up 12 minutes (healthy) | 127.0.0.1:8078->8080/tcp
+catalog-db | Up 20 minutes (healthy) | 5432/tcp
+catalog-service | Up 17 seconds (healthy) | 
+catalog-service-2 | Up 6 seconds (health: starting) | 
+config-server | Up 13 minutes (healthy) | 127.0.0.1:8888->8888/tcp
+discovery-server | Up 13 minutes (healthy) | 127.0.0.1:8768->8761/tcp
+keycloak | Up 20 minutes | 127.0.0.1:8180->8080/tcp
+logistics-db | Up 20 minutes (healthy) | 5432/tcp
+logistics-service | Up 13 minutes (healthy) | 
+rabbitmq | Up 18 minutes (healthy) | 127.0.0.1:15678->15672/tcp
+rental-service | Up 7 minutes (healthy) | 
+rentals-db | Up 20 minutes (healthy) | 5432/tcp

@@ -1,0 +1,1334 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "name": "tourrent"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "name": "catalog-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "catalog-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "catalog-db"
+        },
+        "ports": [
+          {
+            "port": 5432,
+            "targetPort": 5432,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "catalog-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "Recreate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "catalog-db"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "catalog-db"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "catalog-db",
+                "image": "postgres:17-alpine",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 5432
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "192Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "POSTGRES_DB",
+                    "value": "catalog"
+                  },
+                  {
+                    "name": "POSTGRES_USER",
+                    "value": "tourrent"
+                  },
+                  {
+                    "name": "POSTGRES_PASSWORD",
+                    "value": "tourrent-demo"
+                  },
+                  {
+                    "name": "PGDATA",
+                    "value": "/var/lib/postgresql/data/pgdata"
+                  }
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "data",
+                    "mountPath": "/var/lib/postgresql/data"
+                  }
+                ],
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "pg_isready",
+                      "-U",
+                      "tourrent"
+                    ]
+                  },
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "volumes": [
+              {
+                "name": "data",
+                "persistentVolumeClaim": {
+                  "claimName": "catalog-db"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "name": "rentals-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "rentals-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "rentals-db"
+        },
+        "ports": [
+          {
+            "port": 5432,
+            "targetPort": 5432,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "rentals-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "Recreate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "rentals-db"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "rentals-db"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "rentals-db",
+                "image": "postgres:17-alpine",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 5432
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "192Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "POSTGRES_DB",
+                    "value": "rentals"
+                  },
+                  {
+                    "name": "POSTGRES_USER",
+                    "value": "tourrent"
+                  },
+                  {
+                    "name": "POSTGRES_PASSWORD",
+                    "value": "tourrent-demo"
+                  },
+                  {
+                    "name": "PGDATA",
+                    "value": "/var/lib/postgresql/data/pgdata"
+                  }
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "data",
+                    "mountPath": "/var/lib/postgresql/data"
+                  }
+                ],
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "pg_isready",
+                      "-U",
+                      "tourrent"
+                    ]
+                  },
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "volumes": [
+              {
+                "name": "data",
+                "persistentVolumeClaim": {
+                  "claimName": "rentals-db"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "name": "logistics-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "logistics-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "logistics-db"
+        },
+        "ports": [
+          {
+            "port": 5432,
+            "targetPort": 5432,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "logistics-db",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "Recreate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "logistics-db"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "logistics-db"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "logistics-db",
+                "image": "postgres:17-alpine",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 5432
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "192Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "POSTGRES_DB",
+                    "value": "logistics"
+                  },
+                  {
+                    "name": "POSTGRES_USER",
+                    "value": "tourrent"
+                  },
+                  {
+                    "name": "POSTGRES_PASSWORD",
+                    "value": "tourrent-demo"
+                  },
+                  {
+                    "name": "PGDATA",
+                    "value": "/var/lib/postgresql/data/pgdata"
+                  }
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "data",
+                    "mountPath": "/var/lib/postgresql/data"
+                  }
+                ],
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "pg_isready",
+                      "-U",
+                      "tourrent"
+                    ]
+                  },
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "volumes": [
+              {
+                "name": "data",
+                "persistentVolumeClaim": {
+                  "claimName": "logistics-db"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "name": "rabbit-data",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "rabbitmq",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "rabbitmq"
+        },
+        "ports": [
+          {
+            "port": 5672,
+            "targetPort": 5672,
+            "name": "port-0"
+          },
+          {
+            "port": 15672,
+            "targetPort": 15672,
+            "name": "port-1"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "rabbitmq",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "Recreate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "rabbitmq"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "rabbitmq"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "rabbitmq",
+                "image": "rabbitmq:4.1-management-alpine",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 5672
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "384Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "RABBITMQ_DEFAULT_USER",
+                    "value": "tourrent"
+                  },
+                  {
+                    "name": "RABBITMQ_DEFAULT_PASS",
+                    "value": "tourrent-demo"
+                  }
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "data",
+                    "mountPath": "/var/lib/rabbitmq"
+                  }
+                ],
+                "args": [
+                  "sh",
+                  "-ec",
+                  "chown -R rabbitmq:rabbitmq /var/lib/rabbitmq; exec su-exec rabbitmq rabbitmq-server"
+                ],
+                "readinessProbe": {
+                  "tcpSocket": {
+                    "port": 5672
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "volumes": [
+              {
+                "name": "data",
+                "persistentVolumeClaim": {
+                  "claimName": "rabbit-data"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "keycloak-realm",
+        "namespace": "tourrent"
+      },
+      "data": {
+        "tourrent-realm.json": "{\"realm\": \"tourrent\", \"enabled\": true, \"displayName\": \"TourRent — прокат снаряжения\", \"registrationAllowed\": false, \"sslRequired\": \"none\", \"accessTokenLifespan\": 900, \"roles\": {\"realm\": [{\"name\": \"CUSTOMER\"}, {\"name\": \"ADMIN\"}]}, \"clients\": [{\"clientId\": \"tourrent-web\", \"name\": \"TourRent\", \"enabled\": true, \"publicClient\": true, \"standardFlowEnabled\": true, \"directAccessGrantsEnabled\": true, \"redirectUris\": [\"http://localhost:8078/*\", \"http://127.0.0.1:8078/*\"], \"webOrigins\": [\"http://localhost:8078\", \"http://127.0.0.1:8078\"], \"attributes\": {\"pkce.code.challenge.method\": \"S256\"}}], \"users\": [{\"username\": \"demo\", \"enabled\": true, \"emailVerified\": true, \"firstName\": \"Иван\", \"lastName\": \"Прокофьев\", \"email\": \"demo@tourrent.local\", \"credentials\": [{\"type\": \"password\", \"value\": \"Demo12345!\", \"temporary\": false}], \"realmRoles\": [\"CUSTOMER\"]}]}"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "name": "keycloak-data",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "keycloak",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "keycloak"
+        },
+        "ports": [
+          {
+            "port": 8080,
+            "targetPort": 8080,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "keycloak",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "Recreate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "keycloak"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "keycloak"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "keycloak",
+                "image": "quay.io/keycloak/keycloak:26.0.7",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "1Gi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "KC_BOOTSTRAP_ADMIN_USERNAME",
+                    "value": "admin"
+                  },
+                  {
+                    "name": "KC_BOOTSTRAP_ADMIN_PASSWORD",
+                    "value": "admin-demo"
+                  },
+                  {
+                    "name": "JAVA_OPTS_KC_HEAP",
+                    "value": "-Xms128m -Xmx256m"
+                  },
+                  {
+                    "name": "JAVA_OPTS_APPEND",
+                    "value": "-XX:ActiveProcessorCount=2"
+                  }
+                ],
+                "args": [
+                  "start-dev",
+                  "--import-realm",
+                  "--hostname=http://localhost:8180",
+                  "--hostname-strict=false"
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "realm",
+                    "mountPath": "/opt/keycloak/data/import",
+                    "readOnly": true
+                  },
+                  {
+                    "name": "data",
+                    "mountPath": "/opt/keycloak/data"
+                  }
+                ],
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/realms/tourrent/.well-known/openid-configuration",
+                    "port": 8080
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "volumes": [
+              {
+                "name": "realm",
+                "configMap": {
+                  "name": "keycloak-realm"
+                }
+              },
+              {
+                "name": "data",
+                "persistentVolumeClaim": {
+                  "claimName": "keycloak-data"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "discovery-server",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "discovery-server"
+        },
+        "ports": [
+          {
+            "port": 8761,
+            "targetPort": 8761,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "discovery-server",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "RollingUpdate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "discovery-server"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "discovery-server"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "discovery-server",
+                "image": "tourrent/discovery-server:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 8761
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "384Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "TZ",
+                    "value": "Europe/Moscow"
+                  }
+                ],
+                "startupProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health",
+                    "port": 8761
+                  },
+                  "failureThreshold": 60,
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8761
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                },
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/liveness",
+                    "port": 8761
+                  },
+                  "periodSeconds": 15,
+                  "timeoutSeconds": 3
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "config-server",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "config-server"
+        },
+        "ports": [
+          {
+            "port": 8888,
+            "targetPort": 8888,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "config-server",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "RollingUpdate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "config-server"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "config-server"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "config-server",
+                "image": "tourrent/config-server:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 8888
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "384Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "TZ",
+                    "value": "Europe/Moscow"
+                  }
+                ],
+                "startupProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health",
+                    "port": 8888
+                  },
+                  "failureThreshold": 60,
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8888
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                },
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/liveness",
+                    "port": 8888
+                  },
+                  "periodSeconds": 15,
+                  "timeoutSeconds": 3
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "catalog-service",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "catalog-service"
+        },
+        "ports": [
+          {
+            "port": 8080,
+            "targetPort": 8080,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "catalog-service",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 2,
+        "strategy": {
+          "type": "RollingUpdate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "catalog-service"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "catalog-service"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "catalog-service",
+                "image": "tourrent/catalog-service:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "384Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "TZ",
+                    "value": "Europe/Moscow"
+                  }
+                ],
+                "startupProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health",
+                    "port": 8080
+                  },
+                  "failureThreshold": 60,
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                },
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/liveness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 15,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "initContainers": [
+              {
+                "name": "wait-for-config",
+                "image": "tourrent/catalog-service:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "command": [
+                  "sh",
+                  "-ec",
+                  "until curl -fsS --max-time 3 http://config-server:8888/actuator/health; do sleep 2; done"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "rental-service",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "rental-service"
+        },
+        "ports": [
+          {
+            "port": 8080,
+            "targetPort": 8080,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "rental-service",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "RollingUpdate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "rental-service"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "rental-service"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "rental-service",
+                "image": "tourrent/rental-service:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "384Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "TZ",
+                    "value": "Europe/Moscow"
+                  }
+                ],
+                "startupProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health",
+                    "port": 8080
+                  },
+                  "failureThreshold": 60,
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                },
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/liveness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 15,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "initContainers": [
+              {
+                "name": "wait-for-config",
+                "image": "tourrent/rental-service:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "command": [
+                  "sh",
+                  "-ec",
+                  "until curl -fsS --max-time 3 http://config-server:8888/actuator/health; do sleep 2; done"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "logistics-service",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "logistics-service"
+        },
+        "ports": [
+          {
+            "port": 8080,
+            "targetPort": 8080,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "logistics-service",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "RollingUpdate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "logistics-service"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "logistics-service"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "logistics-service",
+                "image": "tourrent/logistics-service:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "384Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "TZ",
+                    "value": "Europe/Moscow"
+                  }
+                ],
+                "startupProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health",
+                    "port": 8080
+                  },
+                  "failureThreshold": 60,
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                },
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/liveness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 15,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "initContainers": [
+              {
+                "name": "wait-for-config",
+                "image": "tourrent/logistics-service:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "command": [
+                  "sh",
+                  "-ec",
+                  "until curl -fsS --max-time 3 http://config-server:8888/actuator/health; do sleep 2; done"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "api-gateway",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "selector": {
+          "app": "api-gateway"
+        },
+        "ports": [
+          {
+            "port": 8080,
+            "targetPort": 8080,
+            "name": "port-0"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "api-gateway",
+        "namespace": "tourrent"
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "RollingUpdate"
+        },
+        "selector": {
+          "matchLabels": {
+            "app": "api-gateway"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "api-gateway"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "api-gateway",
+                "image": "tourrent/api-gateway:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "memory": "96Mi",
+                    "cpu": "50m"
+                  },
+                  "limits": {
+                    "memory": "384Mi"
+                  }
+                },
+                "env": [
+                  {
+                    "name": "TZ",
+                    "value": "Europe/Moscow"
+                  }
+                ],
+                "startupProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health",
+                    "port": 8080
+                  },
+                  "failureThreshold": 60,
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/readiness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 10,
+                  "timeoutSeconds": 3
+                },
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/actuator/health/liveness",
+                    "port": 8080
+                  },
+                  "periodSeconds": 15,
+                  "timeoutSeconds": 3
+                }
+              }
+            ],
+            "initContainers": [
+              {
+                "name": "wait-for-config",
+                "image": "tourrent/api-gateway:1.0.0",
+                "imagePullPolicy": "IfNotPresent",
+                "command": [
+                  "sh",
+                  "-ec",
+                  "until curl -fsS --max-time 3 http://config-server:8888/actuator/health; do sleep 2; done"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

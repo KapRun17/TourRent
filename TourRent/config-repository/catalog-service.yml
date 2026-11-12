@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://catalog-db:5432/catalog
+    username: tourrent
+    password: tourrent-demo
